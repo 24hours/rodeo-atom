@@ -13,7 +13,6 @@ class CliStatusView extends View
   toolTipDisposable: null
 
   initialize: (serializeState) ->
-    console.log('CliStatusView running')
     atom.commands.add 'atom-workspace',
       'rodeo-atom:new': => @newTermClick()
       'rodeo-atom:toggle': => @toggle()
@@ -79,8 +78,7 @@ class CliStatusView extends View
 
   runScript: ->
     @toggle()
-    
+
   toggle: ->
-    console.log 'toggling'
     @createCommandView() unless @commandViews[@activeIndex]?
     @commandViews[@activeIndex].toggle()

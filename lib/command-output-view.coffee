@@ -29,14 +29,35 @@ class CommandOutputView extends View
     atom.commands.add 'atom-workspace',
       "rodeo-atom:toggle-output": => @toggle()
     @line = 0
+    @indentLevel = 0
+    @commandLine = ''
+    @multiline = false
     @sendCmd 'print get_ipython().banner'
     atom.commands.add @cmdEditor.element,
       'core:confirm': =>
-        inputCmd = @cmdEditor.getModel().getText()
-        @cliOutput.append "\nIn [#{@line}]:#{inputCmd}\n"
+        inputCmd = @cmdEditor.getModel().getText().replace /\s+$/g, ""
+        if @multiline isnt true
+          @cliOutput.append "\nIn [#{@line}]:#{inputCmd}\n"
+          @commandLine = inputCmd
+        else
+          pad_no =  "In [#{@line}]:".length - 5
+
+          @cliOutput.append "\n#{Array(pad_no+1).join(' ')}....:#{inputCmd}\n"
+          @commandLine = @commandLine + '\n' + inputCmd
+
+        if inputCmd.slice(-1) is ':'
+          @multiline = true
+          @indentLevel++
+        else if inputCmd is ''
+          @multiline = false
+          @indentLevel = 0
+
+        @cmdEditor.setText(Array(@indentLevel*4+1).join(' '))
 
         @scrollToBottom()
-        @sendCmd inputCmd
+        if @multiline isnt true and @commandLine.trim() isnt ''
+          console.log(@commandLine.trim())
+          @sendCmd @commandLine.trim()
 #        @cmdEditor.getModel().
 
   initialize_cmd: ->
@@ -76,8 +97,6 @@ class CommandOutputView extends View
     @cmdEditor.show()
     @cmdEditor.css('visibility', '')
     @cmdEditor.getModel().selectAll()
-
-
     @cmdEditor.setText('') if atom.config.get('rodeo-atom.clearCommandInput')
     @cmdEditor.focus()
     @scrollToBottom()
@@ -243,7 +262,6 @@ class CommandOutputView extends View
     req.write(cmd_data)
     req.on 'response', (resp)=>
       rodeo_resp = resp
-      console.log(resp.statusCode)
       rodeo_resp.on 'data', (chunk) =>
         data = JSON.parse(chunk.toString())
         console.log(data)
@@ -255,7 +273,7 @@ class CommandOutputView extends View
     req.end()
     @showCmd()
     @line++
-    
+
   spawn: (inputCmd, cmd, args) ->
     @cmdEditor.css('visibility', 'hidden')
     htmlStream = ansihtml()
