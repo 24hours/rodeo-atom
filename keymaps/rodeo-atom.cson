@@ -1,0 +1,28 @@
+# Keybindings require three things to be fully defined: A selector that is
+# matched against the focused element, the keystroke and the command to
+# execute.
+#
+# Below is a basic keybinding which registers on all platforms by applying to
+# the root workspace element.
+
+# For more detailed documentation see
+# https://atom.io/docs/latest/behind-atom-keymaps-in-depth
+'.platform-darwin atom-workspace':
+  'ctrl-`':      'rodeo-atom:toggle'
+  'cmd-shift-t': 'rodeo-atom:new'
+  'cmd-shift-j': 'rodeo-atom:next'
+  'cmd-shift-k': 'rodeo-atom:prev'
+  'cmd-shift-x': 'rodeo-atom:destroy'
+  'cmd-shift-r' : 'rodeo-atom:run'
+
+'.platform-linux atom-workspace, .platform-win32 atom-workspace':
+  'ctrl-`':     'rodeo-atom:toggle'
+  'alt-shift-t': 'rodeo-atom:new'
+  'alt-shift-j': 'rodeo-atom:next'
+  'alt-shift-k': 'rodeo-atom:prev'
+  'alt-shift-x': 'rodeo-atom:destroy'
+  'alt-shift-r' : 'rodeo-atom:run'
+
+'.cli-status atom-text-editor':
+  'up': 'core:undo'
+  'down': 'core:redo'
