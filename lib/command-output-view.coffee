@@ -28,12 +28,13 @@ class CommandOutputView extends View
   initialize: ->
     atom.commands.add 'atom-workspace',
       "rodeo-atom:toggle-output": => @toggle()
-
+    @line = 0
     @sendCmd 'print get_ipython().banner'
     atom.commands.add @cmdEditor.element,
       'core:confirm': =>
         inputCmd = @cmdEditor.getModel().getText()
-        @cliOutput.append "\n>>>#{inputCmd}\n"
+        @cliOutput.append "\nIn [#{@line}]:#{inputCmd}\n"
+
         @scrollToBottom()
         @sendCmd inputCmd
 #        @cmdEditor.getModel().
@@ -75,6 +76,8 @@ class CommandOutputView extends View
     @cmdEditor.show()
     @cmdEditor.css('visibility', '')
     @cmdEditor.getModel().selectAll()
+
+
     @cmdEditor.setText('') if atom.config.get('rodeo-atom.clearCommandInput')
     @cmdEditor.focus()
     @scrollToBottom()
@@ -240,14 +243,19 @@ class CommandOutputView extends View
     req.write(cmd_data)
     req.on 'response', (resp)=>
       rodeo_resp = resp
+      console.log(resp.statusCode)
       rodeo_resp.on 'data', (chunk) =>
-        data = ansihtml.toHtml(JSON.parse(chunk.toString())['output'])
+        data = JSON.parse(chunk.toString())
+        console.log(data)
+        output = data['output'] or data['error']
+        data = ansihtml.toHtml(output) if output
         @cliOutput.append data
         @scrollToBottom()
       #rodeo_resp.read()
     req.end()
     @showCmd()
-
+    @line++
+    
   spawn: (inputCmd, cmd, args) ->
     @cmdEditor.css('visibility', 'hidden')
     htmlStream = ansihtml()
