@@ -77,7 +77,11 @@ class CliStatusView extends View
     @detach()
 
   runScript: ->
-    @toggle()
+    @createCommandView() unless @commandViews[@activeIndex]
+    @commandViews[@activeIndex].open()
+    editor = atom.workspace.getActiveTextEditor()
+    pyCode = editor.getText()
+    @commandViews[@activeIndex].sendCmd(pyCode)
 
   toggle: ->
     @createCommandView() unless @commandViews[@activeIndex]?
