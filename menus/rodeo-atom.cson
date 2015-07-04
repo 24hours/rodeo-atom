@@ -1,11 +1,6 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
 'context-menu':
-  'atom-text-editor': [
-    {
-      'label': 'Toggle rodeo-atom'
-      'command': 'rodeo-atom:toggle'
-    }
-  ]
+  'atom-text-editor': []
 'menu': [
   {
     'label': 'Packages'
@@ -13,8 +8,8 @@
       'label': 'rodeo-atom'
       'submenu': [
         {
-          'label': 'Toggle'
-          'command': 'rodeo-atom:toggle'
+          'label': 'Enable'
+          'command': 'rodeo-atom:enable'
         }
       ]
     ]
