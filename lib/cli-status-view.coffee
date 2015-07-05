@@ -5,6 +5,7 @@ module.exports =
 class CliStatusView extends View
   @content: ->
     @div class: 'cli-status inline-block', =>
+      @span 'Rodeo '
       @span outlet: 'termStatusContainer', =>
         @span click: 'newTermClick', outlet: 'termStatusAdd', class: "cli-status icon icon-plus"
 
